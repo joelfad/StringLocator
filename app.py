@@ -46,9 +46,6 @@ with app.test_request_context():
     print(url_for('search', next='/'))
     print(url_for('find', query='Now'))
 
-    # small tests
-    print(text.load('resources/text/king-i.txt'))
-
 
 if __name__ == '__main__':
     app.run()
