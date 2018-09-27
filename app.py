@@ -1,4 +1,13 @@
+#
+# StringLocator - 24 hour programming challenge
+#
+# [app.py]
+# Starting point of application, contains REST route definitions
+#
+
+
 from flask import Flask, url_for, jsonify
+import text
 
 app = Flask(__name__)
 
@@ -36,6 +45,9 @@ with app.test_request_context():
     print(url_for('search'))
     print(url_for('search', next='/'))
     print(url_for('find', query='Now'))
+
+    # small tests
+    print(text.load('resources/text/king-i.txt'))
 
 
 if __name__ == '__main__':
