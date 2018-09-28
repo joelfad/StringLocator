@@ -1,7 +1,7 @@
-##StringLocator v1.0 API Documentation
+## StringLocator v1.0 API Documentation
 
 
-###Description:
+### Description:
 
 StringLocator is a tool for querying text documents that are included in its library. It provides
 a RESTful interface for Ctrl-f functionality (i.e. as in Google Chrome) and returns JSON. Search
@@ -9,7 +9,7 @@ results are include details about the location of matches within the file along 
 context.
 
 
-###Endpoints:
+### Endpoints:
 
 Currently, only one endpoint is supported on port 5000: /stringlocator/api/v1.0/search/
 
@@ -37,12 +37,13 @@ A response (in JSON) will be returned as follows:
 If no results are found, "occurrences" will simply contain an empty list.
 
 
-###Examples:
+### Examples:
 
-####GET Request:
+#### GET Request:
 `http://127.0.0.1:5000/stringlocator/api/v1.0/search/121b425579e19849?q=struggle`
 
-####JSON Response (with matching results):
+#### JSON Response (with matching results):
+
     {
         "query_text": "struggle",
         "number_of_occurrences": 2,
@@ -66,10 +67,11 @@ If no results are found, "occurrences" will simply contain an empty list.
     }
 
 
-####GET Request:
+#### GET Request:
 `http://127.0.0.1:5000/stringlocator/api/v1.0/search/121b425579e19849?q=apple`
 
-####JSON Response (no results):
+#### JSON Response (no results):
+
     {
         "query_text": "apple",
         "number_of_occurrences": 0,
