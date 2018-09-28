@@ -97,3 +97,7 @@ class TestSearchableText(unittest.TestCase):
             "occurrences": []
         }
         self.assertDictEqual(self.st_1.process_query(QUERY), EXPECTED)
+
+    def test_file_not_found(self):
+        # TODO
+        pass

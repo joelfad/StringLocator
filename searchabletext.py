@@ -10,9 +10,15 @@
 from nltk.tokenize import PunktSentenceTokenizer
 import re
 import hashlib
+import sys
 
 
 class SearchableText:
+    """
+    Represents a body of text which can be searched for occurrences of a query. Reduces the
+    number of times the text is loaded and traversed
+    """
+
     def __init__(self, file_path):
         """
         Initialize searchable text object with plaintext file.
@@ -20,9 +26,13 @@ class SearchableText:
         :param file_path: string, path to file
         """
         # load file
-        # TODO: Handle errors here if file is not found...
         with open(file_path, 'r') as f:
-            self.text = f.read()
+            try:
+                self.text = f.read()
+                self.text_lines = self.text.split('\n')
+            except IOError as e:
+                print("Error: Unable to read file: {}".format(e))
+                sys.exit(1)
 
         # detect sentence boundaries
         self.boundaries = list(PunktSentenceTokenizer().span_tokenize(self.text))

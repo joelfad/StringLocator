@@ -6,13 +6,16 @@
 #
 
 
-from flask import Flask, url_for, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from searchabletext import SearchableText
+from invalidusage import InvalidUsage
+from apidoc import API_DOC
 import os
 
 
 app = Flask(__name__)
 
+# text files to store in library for searching
 RESOURCE_PATH = './resources/text'  # File IDs
 TEXT_FILES = [                      # ----------------
     'king-i.txt',                   # 121b425579e19849
@@ -29,39 +32,60 @@ def init_searchable_texts():
     return searchable_texts
 
 
+# dictionary of texts, indexed by ID
 library = init_searchable_texts()
 
 
-# TODO: Handle REST errors by returning response codes (e.g. 400, 404, etc.) and redirecting...
 # TODO: Deploy to Heroku (https://devcenter.heroku.com/articles/getting-started-with-python)
 
 
 @app.route('/')
 def index():
-    # TODO: Return API documentation
-    return 'index'
+    """
+    Display API documentation.
+    """
+    return render_template('index.html', text=API_DOC)
 
 
 @app.route('/stringlocator/api/v1.0/search/<fileid>')
 def search(fileid):
+    """
+    Search a file for query text and return matches.
 
-    # TODO: Verify file id and search for results. Handle case where there are none!
-
+    :param fileid: string (in URL), unique 16-bit file identifier
+    :param q: string (as a query parameter), query text
+    :return: JSON, search results
+    """
     query = request.args.get('q')
 
     st = library.get(fileid)
     if not st:
-        return "<h1>Error: Invalid file ID</h1>"
+        raise InvalidUsage("Invalid file ID", 404)
     elif not query:
-        return "<h1>Error: Missing query</h1>"
+        raise InvalidUsage("Missing query")
 
     return jsonify(st.process_query(query))
 
 
-# sample showing URLs
-with app.test_request_context():
-    print(url_for('index'))
-    print(url_for('search', fileid="121b425579e19849", q='beacon'))
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    """
+    Handle misuse of the API. Turns an exception into a consumable response.
+
+    :param error: InvalidUsage, exception with message and optional status code and/or payload
+    :return: JSON, exception details
+    """
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+
+# debug
+# sample showing URLs (could be useful for testing)
+#
+# with app.test_request_context():
+#     print(url_for('index'))
+#     print(url_for('search', fileid="121b425579e19849", q='beacon'))
 
 
 if __name__ == '__main__':
