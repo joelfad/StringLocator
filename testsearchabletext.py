@@ -14,8 +14,8 @@ from app import RESOURCE_PATH, TEXT_FILES
 class TestSearchableText(unittest.TestCase):
 
     def setUp(self):
-        self.st_0 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[0]))
-        self.st_1 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[1]))
+        self.st_0 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[0]))  # original
+        self.st_1 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[1]))  # test
 
     def test_id(self):
         """
@@ -52,36 +52,48 @@ class TestSearchableText(unittest.TestCase):
         }
         self.assertDictEqual(self.st_1.process_query(QUERY), EXPECTED)
 
-    # def test_example_query(self):
-    #     """
-    #     Verify that the provided example "Now is" returns expected results
-    #     """
-    #     QUERY = "Now is"
-    #     EXPECTED = {
-    #         "query_text": "Now is",
-    #         "number_of_occurrences": 3,
-    #         "occurrences": [
-    #             {
-    #                 "line": 45,
-    #                 "start": 17,
-    #                 "end": 23,
-    #                 "in_sentence": "Now is the time to rise from the dark and desolate valley of "
-    #                                "segregation to the sunlit path of racial justice."
-    #             },
-    #             {
-    #                 "line": 46,
-    #                 "start": 62,
-    #                 "end": 68,
-    #                 "in_sentence": "Now is the time to open the doors of opportunity to all of "
-    #                                "God's children."
-    #             },
-    #             {
-    #                 "line": 48,
-    #                 "start": 1,
-    #                 "end": 7,
-    #                 "in_sentence": "Now is the time to lift our nation from the quicksands of "
-    #                                "racial injustice to the solid rock of brotherhood."
-    #             }
-    #         ]
-    #     }
-    #     self.assertDictEqual(self.st_0.process_query(QUERY), EXPECTED)
+    def test_example_query(self):
+        """
+        Verify that the provided example "Now is" returns expected results
+        """
+        QUERY = "Now is"
+        EXPECTED = {
+            "query_text": "Now is",
+            "number_of_occurrences": 3,
+            "occurrences": [
+                {
+                    "line": 45,
+                    "start": 17,
+                    "end": 23,
+                    "in_sentence": "Now is the time to rise from the dark and desolate valley of "
+                                   "segregation to the sunlit path of racial justice."
+                },
+                {
+                    "line": 46,
+                    "start": 62,
+                    "end": 68,
+                    "in_sentence": "Now is the time to open the doors of opportunity to all of "
+                                   "God's children."
+                },
+                {
+                    "line": 48,
+                    "start": 1,
+                    "end": 7,
+                    "in_sentence": "Now is the time to lift our nation from the quicksands of "
+                                   "racial injustice to the solid rock of brotherhood."
+                }
+            ]
+        }
+        self.assertDictEqual(self.st_0.process_query(QUERY), EXPECTED)
+
+    def test_no_results(self):
+        """
+        Verify that no results returns standard schema
+        """
+        QUERY = "foobar42"
+        EXPECTED = {
+            "query_text": "foobar42",
+            "number_of_occurrences": 0,
+            "occurrences": []
+        }
+        self.assertDictEqual(self.st_1.process_query(QUERY), EXPECTED)

@@ -5,6 +5,8 @@
 # Text file loading and search algorithms
 #
 
+# Note: The tokenizer appears to have trouble interpreting sentences that contain quotes: ""
+#       In a future iteration, a more accurate model could be trained/used.
 from nltk.tokenize import PunktSentenceTokenizer
 import re
 import hashlib
@@ -23,7 +25,7 @@ class SearchableText:
             self.text = f.read()
 
         # detect sentence boundaries
-        self.boundaries = PunktSentenceTokenizer().span_tokenize(self.text)
+        self.boundaries = list(PunktSentenceTokenizer().span_tokenize(self.text))
 
         # create unique 16-bit identifier from text
         self.id = hashlib.md5(self.text.encode('utf-8')).hexdigest()[16:]
@@ -81,6 +83,9 @@ class SearchableText:
         # for pairing matches with sentences
         chars_on_prev_lines = 0
 
+        # start with the first sentence boundary
+        self.current_boundary = 0
+
         lines_of_text = self.text.split('\n')
 
         pattern = re.compile(query_text)
@@ -95,15 +100,15 @@ class SearchableText:
             for m in matches:
 
                 # debug
-                # print(m)
+                print(m)
 
-                char_index = chars_on_prev_lines + m.start()
+                match_index = chars_on_prev_lines + m.start()
                 occurrences.append(
                     {
                         "line": line_number,        # line numbers start at 1
                         "start": m.start() + 1,     # first character of occurrence
                         "end": m.end() + 1,         # character immediately after occurrence
-                        "in_sentence": next(self._find_sentence(char_index))
+                        "in_sentence": self._find_sentence(match_index)
                     }
                 )
 
@@ -112,30 +117,31 @@ class SearchableText:
 
         return occurrences
 
-    def _find_sentence(self, char_index):
+    def _find_sentence(self, match_index):
         """
-        Generator to pair matches with sentences
+        Retrieves the sentence a match belongs to.
 
         :param char_index: int, index (from beginning of file starting at 0) of first character of match
-        :return: sentence the match belongs to
+        :return: string, sentence containing match
         """
 
-        print("OUTSIDE")
-        # iterate through each sentence
-        for boundary in self.boundaries:
+        # iterate through the lower and upper index bounds of each sentence
+        # beginning with the same sentence as the last method call
+        for boundary in self.boundaries[self.current_boundary:]:
 
             # debug
             # print(boundary)
 
             # TODO: Look for edge cases in here (e.g. a whitespace search that is between sentences)
 
-            # handle all matches in current sentence before advancing
-            print("FOR LOOP")
-            while char_index in range(*boundary):
-                print("WHILE LOOP")
+            # check if match index is within the current sentence boundary
+            if match_index in range(*boundary):
 
                 # debug
-                # print("{} is in the range{}\n".format(char_index, boundary))
+                print("{} is in the range{}\n".format(match_index, boundary))
 
                 # grab sentence from text and replace CRLF with spaces
-                yield re.sub(r"\r?\n", " ", self.text[slice(*boundary)])
+                return re.sub(r"\r?\n", " ", self.text[slice(*boundary)])
+            else:
+                # advance to next sentence
+                self.current_boundary = self.current_boundary + 1

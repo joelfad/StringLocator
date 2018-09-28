@@ -16,7 +16,7 @@ app = Flask(__name__)
 RESOURCE_PATH = './resources/text'  # File IDs
 TEXT_FILES = [                      # ----------------
     'king-i.txt',                   # 121b425579e19849
-    'king-easy-test.txt'            # 7a8764b75df898c1
+    'king-i-test.txt'               # 7a8764b75df898c1
 ]
 
 
