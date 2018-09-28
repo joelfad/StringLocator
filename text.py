@@ -9,9 +9,6 @@ from nltk.tokenize import PunktSentenceTokenizer
 import re
 
 
-TEXT_PATH = './resources/text/king-easy-test.txt'
-
-
 class SearchableText:
     def __init__(self, filename):
         # load file
@@ -103,7 +100,7 @@ class SearchableText:
 
 
 # debug - DEMO
-s = SearchableText(TEXT_PATH)
-r = s.process_query("This")
-for o in r["occurrences"]:
-    print(o)
+# s = SearchableText(TEXT_PATH)
+# r = s.process_query("This")
+# for o in r["occurrences"]:
+#     print(o)

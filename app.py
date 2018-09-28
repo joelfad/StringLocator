@@ -7,9 +7,12 @@
 
 
 from flask import Flask, url_for, jsonify
-import text
+from text import SearchableText
+
+TEXT_PATH = './resources/text/king-i.txt'
 
 app = Flask(__name__)
+st = SearchableText(TEXT_PATH)
 
 
 @app.route('/')
@@ -32,18 +35,7 @@ def search():
 # sample return JSON
 @app.route('/search/<query>')
 def find(query):
-    return jsonify(
-        query_text=query,
-        number_of_occurrences=3,
-        occurrences=[
-            {
-                "line": 1,
-                "start": 2,
-                "end": 3,
-                "in_sentence": "Test sentence."
-            }
-        ]
-    )
+    return jsonify(st.process_query(query))
 
 
 # sample showing URLs
