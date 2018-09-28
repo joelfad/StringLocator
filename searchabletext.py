@@ -12,26 +12,51 @@ import hashlib
 
 class SearchableText:
     def __init__(self, file_path):
+        """
+        Initialize searchable text object with plaintext file.
+
+        :param file_path: string, path to file
+        """
         # load file
+        # TODO: Handle errors here if file is not found...
         with open(file_path, 'r') as f:
             self.text = f.read()
 
         # detect sentence boundaries
         self.boundaries = PunktSentenceTokenizer().span_tokenize(self.text)
 
-        # create unique identifier from text
-        self.id = hashlib.md5(self.text.encode('utf-8')).hexdigest()
+        # create unique 16-bit identifier from text
+        self.id = hashlib.md5(self.text.encode('utf-8')).hexdigest()[16:]
 
     def get_id(self):
-        print(self.id)
+        """
+        Returns unique id generated from document's contents.
+
+        :return: string, md5 hash of document text
+        """
         return self.id
 
     def process_query(self, query_text):
         """
-        TODO: Add documentation
+        Queries document for provided string and aggregates results in a dictionary.
 
-        :param query_text:
-        :return:
+        :param query: string, to search document for
+        :return: dictionary, with the following schema:
+            {
+                "query_text": <string used for query>,
+                "number_of_occurrences": <results found>,
+                "occurrences": [
+                    {
+                        "line": <line number of result>,
+                        "start": <index of result's first character>,
+                        "end": <index of character immediately after result>,
+                        "in_sentence": <sentence result was found in>
+                    },
+                    {
+                        ...
+                    }
+                ]
+            }
         """
 
         occurrences = self._find_occurrences(query_text)
@@ -43,10 +68,11 @@ class SearchableText:
 
     def _find_occurrences(self, query_text):
         """
-        TODO: Add documentation
+        Internal implementation of "process_query" method. This is where the hard work
+        of searching and indexing the document text takes place.
 
-        :param query_text:
-        :return:
+        :param query_text: string, to search document for
+        :return: list of dictionaries containing detailed results (see "process_query" above)
         """
 
         occurrences = []
@@ -89,12 +115,19 @@ class SearchableText:
     def _find_sentence(self, char_index):
         """
         Generator to pair matches with sentences
+
+        :param char_index: int, index (from beginning of file starting at 0) of first character of match
+        :return: sentence the match belongs to
         """
+        # iterate through each sentence
         for boundary in self.boundaries:
 
             # debug
             # print(boundary)
 
+            # TODO: Look for edge cases in here (e.g. a whitespace search that is between sentences)
+
+            # handle all matches in current sentence before advancing
             while char_index in range(*boundary):
 
                 # debug

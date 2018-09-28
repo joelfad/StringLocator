@@ -19,7 +19,7 @@ class TestSearchableText(unittest.TestCase):
         """
         Confirm a consistent id is generated from the provided text
         """
-        self.assertEqual(self.st.get_id(), '2291bb03208a044b121b425579e19849')
+        self.assertEqual(self.st.get_id(), '121b425579e19849')
 
     def test_example_query(self):
         """

@@ -9,10 +9,16 @@
 from flask import Flask, url_for, jsonify
 from searchabletext import SearchableText
 
-TEXT_PATH = './resources/text/king-i.txt'
 
 app = Flask(__name__)
+
+# TODO: Index texts by their ids so you can scale the service later...
+TEXT_PATH = './resources/text/king-i.txt'
 st = SearchableText(TEXT_PATH)
+
+
+# TODO: Handle REST errors by returning response codes (e.g. 400, 404, etc.) and redirecting...
+
 
 @app.route('/')
 def index():
@@ -20,20 +26,12 @@ def index():
     return 'index'
 
 
-@app.route('/search')
-def search():
-    # TODO: Return API documentation
-    # debug: confirm jsonify can handle dictionaries
-    return jsonify(
-        {
-            "apples": 1,
-            "pears": 2,
-            "kiwis": 5
-        }
-    )
+@app.route('/stringlocator/api/v1.0/search/<fileid>')
+def search(fileid):
+    # TODO: Verify file id and search for results. Handle case where there are none!
+    return fileid
 
 
-# sample return JSON
 @app.route('/search/<query>')
 def find(query):
     return jsonify(st.process_query(query))
@@ -42,9 +40,7 @@ def find(query):
 # sample showing URLs
 with app.test_request_context():
     print(url_for('index'))
-    print(url_for('search'))
-    print(url_for('search', next='/'))
-    print(url_for('find', query='Now'))
+    print(url_for('search', fileid="121b425579e19849", q='beacon'))
 
 
 if __name__ == '__main__':
