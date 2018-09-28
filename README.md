@@ -11,9 +11,10 @@ context.
 
 ### Endpoints:
 
-Currently, only one endpoint is supported on port 5000: /stringlocator/api/v1.0/search/
+Currently, only one endpoint is supported on port 5000: **/stringlocator/api/v1.0/search/**
 
 To perform a search, a unique 16-bit file identifier and query string are required:
+
 `/stringlocator/api/v1.0/search/<file id>/?q=<query string>`
 
 A response (in JSON) will be returned as follows:
