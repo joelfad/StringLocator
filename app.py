@@ -19,7 +19,14 @@ def index():
 
 @app.route('/search')
 def search():
-    return 'search'
+    # debug: confirm jsonify can handle dictionaries
+    return jsonify(
+        {
+            "apples": 1,
+            "pears": 2,
+            "kiwis": 5
+        }
+    )
 
 
 # sample return JSON

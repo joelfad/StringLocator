@@ -22,12 +22,12 @@ class SearchableText:
         self.boundaries = PunktSentenceTokenizer().span_tokenize(self.text)
 
         # debug 1
-        sentences = sent_tokenize(self.text)
-        counter = 0
-        for s in sentences:
-            print('[{}]'.format(counter))
-            print(s)
-            counter = counter + 1
+        # sentences = sent_tokenize(self.text)
+        # counter = 0
+        # for s in sentences:
+        #     print('[{}]'.format(counter))
+        #     print(s)
+        #     counter = counter + 1
 
     def text(self):
         return self.text
@@ -38,15 +38,77 @@ class SearchableText:
             print(b)
         return b
 
+    def query(self, query_text):
+        result = {
+            "query_text": query_text,
+            "number_of_occurrences": 0,
+            "occurrences": []
+        }
+        self.find_occurrences(query_text)
 
-class QueryResult:
-    def __init__(self, query):
-        self.query = query
+    def find_occurrences(self, query_text):
+
+        result = []
+
+        pattern = re.compile(query_text)
+        line_counter = 0
+        char_counter = 0
+
+        lines_of_text = self.text.split('\n')
+        print(lines_of_text)
+
+        for line in lines_of_text:
+
+            matches = re.finditer(pattern, line)
+            for m in matches:
+                print(m)
+                # print("line_number: {}".format(line_counter + 1))
+                result.append(
+                    {
+                        "line": line_counter + 1,
+                        "start": m.start() + 1,
+                        "end": m.end() + 1,
+                        "in_sentence": "TODO"
+                    }
+                )
+
+            char_counter = char_counter + len(lines_of_text[line_counter])
+            line_counter = line_counter + 1
+
+        for r in result:
+            print(r)
+
+
+
+
+
+
+
+        #
+        # debug: this is what we need to build!
+        #
+        # query_text=query,
+        # number_of_occurrences=3,
+        # occurrences=[
+        #     {
+        #         "line": 1,
+        #         "start": 2,
+        #         "end": 3,
+        #         "in_sentence": "Test sentence."
+        #     }
+        # ]
+        #
+
+
+
+
+        return result
+
 
 
 s = SearchableText(TEXT_PATH)
-q = QueryResult("beacon")
+r = s.query("beacon")
 
 
 # grab sentence from text and replace CRLF with spaces
-print(re.sub(r"\r?\n", " ", s.text[slice(*s.last_boundary())]))
+# print(re.sub(r"\r?\n", " ", s.text[slice(*s.last_boundary())]))
