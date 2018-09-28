@@ -7,21 +7,22 @@
 
 
 from flask import Flask, url_for, jsonify
-from text import SearchableText
+from searchabletext import SearchableText
 
 TEXT_PATH = './resources/text/king-i.txt'
 
 app = Flask(__name__)
 st = SearchableText(TEXT_PATH)
 
-
 @app.route('/')
 def index():
+    # TODO: Return API documentation
     return 'index'
 
 
 @app.route('/search')
 def search():
+    # TODO: Return API documentation
     # debug: confirm jsonify can handle dictionaries
     return jsonify(
         {
