@@ -40,7 +40,7 @@ class SearchableText:
         """
         Queries document for provided string and aggregates results in a dictionary.
 
-        :param query: string, to search document for
+        :param query_text: string, to search document for
         :return: dictionary, with the following schema:
             {
                 "query_text": <string used for query>,
@@ -119,6 +119,8 @@ class SearchableText:
         :param char_index: int, index (from beginning of file starting at 0) of first character of match
         :return: sentence the match belongs to
         """
+
+        print("OUTSIDE")
         # iterate through each sentence
         for boundary in self.boundaries:
 
@@ -128,7 +130,9 @@ class SearchableText:
             # TODO: Look for edge cases in here (e.g. a whitespace search that is between sentences)
 
             # handle all matches in current sentence before advancing
+            print("FOR LOOP")
             while char_index in range(*boundary):
+                print("WHILE LOOP")
 
                 # debug
                 # print("{} is in the range{}\n".format(char_index, boundary))
