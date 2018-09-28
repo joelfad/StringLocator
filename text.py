@@ -38,77 +38,74 @@ class SearchableText:
             print(b)
         return b
 
-    def query(self, query_text):
-        result = {
+    def process_query(self, query_text):
+
+        occurrences = self.find_occurrences(query_text)
+
+        # debug
+        # for o in occurrences:
+        #     print(o)
+
+        return {
             "query_text": query_text,
-            "number_of_occurrences": 0,
-            "occurrences": []
+            "number_of_occurrences": len(occurrences),
+            "occurrences": occurrences
         }
-        self.find_occurrences(query_text)
 
     def find_occurrences(self, query_text):
 
-        result = []
+        occurrences = []
 
         pattern = re.compile(query_text)
-        line_counter = 0
-        char_counter = 0
+
+        # keep running count of characters from previous lines (including newlines)
+        # for pairing matches with sentences
+        chars_on_prev_lines = 0
 
         lines_of_text = self.text.split('\n')
         print(lines_of_text)
 
-        for line in lines_of_text:
+        for line_number, line in enumerate(lines_of_text, 1):
 
+            print("Searching line {}...".format(line_number))
+            print("({} chars from previous lines)\n".format(chars_on_prev_lines))
+
+
+            # matches are returned in order found, left to right
             matches = re.finditer(pattern, line)
             for m in matches:
                 print(m)
                 # print("line_number: {}".format(line_counter + 1))
-                result.append(
+                char_index = chars_on_prev_lines + m.start()
+                occurrences.append(
                     {
-                        "line": line_counter + 1,
-                        "start": m.start() + 1,
-                        "end": m.end() + 1,
-                        "in_sentence": "TODO"
+                        "line": line_number,        # line numbers start at 1
+                        "start": m.start() + 1,     # first character of occurrence
+                        "end": m.end() + 1,         # character immediately after occurrence
+                        "in_sentence": next(self.find_sentence(char_index))
                     }
                 )
 
-            char_counter = char_counter + len(lines_of_text[line_counter])
-            line_counter = line_counter + 1
+            # add characters from current line before proceeding to the next
+            chars_on_prev_lines = chars_on_prev_lines + len(lines_of_text[line_number - 1]) + 1
 
-        for r in result:
-            print(r)
+        return occurrences
 
-
-
-
-
-
-
-        #
-        # debug: this is what we need to build!
-        #
-        # query_text=query,
-        # number_of_occurrences=3,
-        # occurrences=[
-        #     {
-        #         "line": 1,
-        #         "start": 2,
-        #         "end": 3,
-        #         "in_sentence": "Test sentence."
-        #     }
-        # ]
-        #
+    def find_sentence(self, char_index):
+        """
+        Generator to pair matches with sentences
+        """
+        for b in self.boundaries:
+            print(b)
+            while char_index in range(*b):
+                print("{} is in the range({}, {})\n".format(char_index, *b))
+                # grab sentence from text and replace CRLF with spaces
+                yield re.sub(r"\r?\n", " ", self.text[slice(*b)])
 
 
-
-
-        return result
-
-
-
+# debug - DEMO
 s = SearchableText(TEXT_PATH)
-r = s.query("beacon")
+r = s.process_query("This")
+for o in r["occurrences"]:
+    print(o)
 
-
-# grab sentence from text and replace CRLF with spaces
-# print(re.sub(r"\r?\n", " ", s.text[slice(*s.last_boundary())]))
