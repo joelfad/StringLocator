@@ -5,6 +5,13 @@
 # Starting point of application, contains REST route definitions
 #
 
+# TODO: Move all test files to ./test subdirectory (deal with PyCharm path issues)
+# TODO: Write more unit tests for search/indexing logic
+# TODO: Handle invalid URLs (e.g. v2.0 of API which doesn't exist yet)
+# TODO: Write unit tests for Flask API
+# TODO: Deploy to Heroku (https://devcenter.heroku.com/articles/getting-started-with-python)
+# TODO: Add deployment instructions to project README
+
 
 from flask import Flask, jsonify, request, render_template
 from searchabletext import SearchableText
@@ -34,9 +41,6 @@ def init_searchable_texts():
 
 # dictionary of texts, indexed by ID
 library = init_searchable_texts()
-
-
-# TODO: Deploy to Heroku (https://devcenter.heroku.com/articles/getting-started-with-python)
 
 
 @app.route('/')
@@ -78,14 +82,6 @@ def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-
-
-# debug
-# sample showing URLs (could be useful for testing)
-#
-# with app.test_request_context():
-#     print(url_for('index'))
-#     print(url_for('search', fileid="121b425579e19849", q='beacon'))
 
 
 if __name__ == '__main__':

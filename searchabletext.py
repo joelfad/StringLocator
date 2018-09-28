@@ -101,17 +101,9 @@ class SearchableText:
         pattern = re.compile(query_text)
         for line_number, line in enumerate(lines_of_text, 1):
 
-            # debug
-            # print("Searching line {}...".format(line_number))
-            # print("({} chars from previous lines)\n".format(chars_on_prev_lines))
-
             # matches are returned in order found, left to right
             matches = re.finditer(pattern, line)
             for m in matches:
-
-                # debug
-                print(m)
-
                 match_index = chars_on_prev_lines + m.start()
                 occurrences.append(
                     {
@@ -139,17 +131,10 @@ class SearchableText:
         # beginning with the same sentence as the last method call
         for boundary in self.boundaries[self.current_boundary:]:
 
-            # debug
-            # print(boundary)
-
-            # TODO: Look for edge cases in here (e.g. a whitespace search that is between sentences)
+            # TODO: Look for edge cases in here (e.g. a query that somehow lands between sentences)
 
             # check if match index is within the current sentence boundary
             if match_index in range(*boundary):
-
-                # debug
-                print("{} is in the range{}\n".format(match_index, boundary))
-
                 # grab sentence from text and replace CRLF with spaces
                 return re.sub(r"\r?\n", " ", self.text[slice(*boundary)])
             else:

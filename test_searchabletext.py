@@ -1,7 +1,7 @@
 #
 # StringLocator - 24 hour programming challenge
 #
-# [testsearchabletext.py]
+# [test_searchabletext.py]
 # Unit tests for SearchableText (searchabletext.py)
 #
 
@@ -9,10 +9,12 @@ import unittest
 import os
 from searchabletext import SearchableText
 from app import RESOURCE_PATH, TEXT_FILES
+from test_app import LARGE_ID
 
 
 class TestSearchableText(unittest.TestCase):
 
+    @classmethod
     def setUp(self):
         self.st_0 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[0]))  # original
         self.st_1 = SearchableText(os.path.join(RESOURCE_PATH, TEXT_FILES[1]))  # test
@@ -21,7 +23,7 @@ class TestSearchableText(unittest.TestCase):
         """
         Verify that a consistent id is generated from the provided text
         """
-        self.assertEqual(self.st_0.get_id(), '121b425579e19849')
+        self.assertEqual(self.st_0.get_id(), LARGE_ID)
 
     def test_two_words_same_sentence_same_line(self):
         """
@@ -98,6 +100,9 @@ class TestSearchableText(unittest.TestCase):
         }
         self.assertDictEqual(self.st_1.process_query(QUERY), EXPECTED)
 
-    def test_file_not_found(self):
-        # TODO
-        pass
+    # def test_file_not_found(self):
+    #     # TODO
+    #     pass
+
+    # TODO: Write more unit tests!
+
